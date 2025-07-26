@@ -7,26 +7,26 @@ import dj_database_url  # Asegúrate de tener dj-database-url instalado
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Clave secreta: deberías usar una variable de entorno en producción
+# Clave secreta: usa variable de entorno en producción para mayor seguridad
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'tu-clave-secreta-temporal-para-desarrollo')
 
 
-# DEBUG debe ser False en producción, con variable de entorno para configurarlo
+# DEBUG debe ser False en producción, configurado vía variable de entorno
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'  # Por defecto True si no está definido
 
 
-# Configura ALLOWED_HOSTS para aceptar localhost y el dominio asignado por Render
+# Configura ALLOWED_HOSTS: local y el dominio asignado por Render
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 
 ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
-    '192.168.100.150',  # tu IP local si es que la usas
+    '192.168.100.150',  # tu IP local si la usas
 ]
 
 if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-# También puedes agregar el dominio manualmente si quieres:
+# También puedes agregar manualmente el dominio si prefieres:
 # ALLOWED_HOSTS.append('control-app-i3i9.onrender.com')
 
 
@@ -83,15 +83,15 @@ WSGI_APPLICATION = 'control.wsgi.application'
 
 # Configuración de la base de datos usando dj_database_url para Render
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.environ.get('DATABASE_URL', 'postgres://postgres:Danilo8669@localhost:5432/gasto'),
+    'default': dj_database_url.config(
+        default='postgres://postgres:Danilo8669@localhost:5432/gasto',
         conn_max_age=600,
         ssl_require=False  # Cambia a True si Render o tu BD usan SSL
     )
 }
 
 
-# Validadores de contraseña (dejar vacíos si quieres sin restricciones)
+# Validadores de contraseña (dejarlos vacíos si no se necesitan)
 AUTH_PASSWORD_VALIDATORS = [
     # Puedes agregar validadores aquí si usas autenticación
 ]
@@ -108,19 +108,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# Durante desarrollo puedes usar esta carpeta para estáticos locales
+# Durante desarrollo puedes usar esta carpeta para archivos estáticos locales
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'control/static'),
 ]
 
-# Para producción, carpeta donde collectstatic recopila todos los archivos
+# Carpeta donde collectstatic recopila los archivos para producción
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# WhiteNoise para servir archivos estáticos comprimidos y con cache
+# WhiteNoise para servir archivos estáticos comprimidos y versionados
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# Ajuste recomendado en Render para seguridad al servir estáticos
+# Ajuste recomendado en Render para manejar proxy y SSL
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 
