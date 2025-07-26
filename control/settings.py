@@ -15,8 +15,19 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'tu-clave-secreta-temporal-para
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'  # Por defecto True si no está definido
 
 
-# ALLOWED_HOSTS: se define con variable de entorno o con localhost para desarrollo
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', 'localhost 127.0.0.1 192.168.100.150').split()
+# Configura ALLOWED_HOSTS para aceptar localhost y el dominio asignado por Render
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '192.168.100.150',  # tu IP local si es que la usas
+]
+
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+# También puedes agregar el dominio manualmente si quieres:
+# ALLOWED_HOSTS.append('control-app-i3i9.onrender.com')
 
 
 # Aplicaciones instaladas
@@ -115,4 +126,3 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Configuración por defecto para campos auto
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
